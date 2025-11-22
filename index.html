@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Yunimo30</title>
+    
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="shortcut icon" href="favicon/favicon.ico">
+    
+    <!-- Tailwind Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        notion: {
+                            bg: '#FFFFFF',
+                            darkBg: '#191919',
+                            sidebar: '#F7F7F5',
+                            darkSidebar: '#202020',
+                            card: '#FFFFFF',
+                            darkCard: '#2D2D2D',
+                            hover: '#EFEFEF',
+                            darkHover: '#3F3F3F'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,500;0,600;1,500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* Sidebar Transition */
+        .sidebar {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-notion-bg text-gray-800 dark:bg-notion-darkBg dark:text-gray-200 overflow-x-hidden">
+
+    <!-- NAVIGATION OVERLAY -->
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+    
+    <!-- SIDEBAR -->
+    <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full w-72 bg-notion-sidebar dark:bg-notion-darkSidebar border-r border-gray-200 dark:border-gray-700 z-50 transform -translate-x-full flex flex-col shadow-xl">
+        
+        <!-- Header -->
+        <div class="p-5 flex items-center justify-between">
+            <div class="flex items-center gap-3 font-medium text-gray-700 dark:text-gray-200">
+                <div class="w-6 h-6 bg-black dark:bg-white text-white dark:text-black rounded flex items-center justify-center text-xs font-bold">Y</div>
+                <span>Yunimo30</span>
+            </div>
+            <button onclick="toggleSidebar()" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition text-gray-500 dark:text-gray-400">
+                <i data-lucide="chevrons-left" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="px-3 py-2 overflow-y-auto flex-1 space-y-1">
+            <div class="text-xs font-semibold text-gray-400 dark:text-gray-500 px-3 mb-2 mt-2 uppercase tracking-wider">Menu</div>
+            
+            <button onclick="switchPage('about')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition text-left">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                About Me
+            </button>
+            
+            <button onclick="switchPage('portfolio')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition text-left">
+                <i data-lucide="kanban-square" class="w-4 h-4"></i>
+                Project Board
+            </button>
+        </div>
+
+        <!-- Dark Mode Toggle (Bottom) -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#252525]">
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Appearance</span>
+                <button onclick="toggleTheme()" class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 dark:bg-gray-600 transition-colors focus:outline-none">
+                    <span class="sr-only">Toggle Dark Mode</span>
+                    <span id="toggle-circle" class="inline-block h-4 w-4 transform translate-x-1 rounded-full bg-white transition-transform duration-200 dark:translate-x-6"></span>
+                </button>
+            </div>
+            <div class="mt-2 flex justify-between text-xs text-gray-400">
+                <i data-lucide="sun" class="w-3 h-3"></i>
+                <i data-lucide="moon" class="w-3 h-3"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="relative min-h-screen transition-all duration-300" id="main-container">
+        
+        <!-- TOP BAR (Hamburger) -->
+        <header class="fixed top-0 left-0 w-full z-30 flex items-center p-3 bg-white/80 dark:bg-[#191919]/80 backdrop-blur-sm h-14 border-b border-transparent transition-colors">
+            <button onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition cursor-pointer text-gray-700 dark:text-gray-200">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="ml-3 flex items-center gap-2 text-sm">
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-gray-900 dark:text-gray-100 breadcrumb">About Me</span>
+            </div>
+        </header>
+
+        <!-- PAGE 1: ABOUT ME (Landing) -->
+        <section id="about-page" class="page-section pt-14 animate-fade-in">
+            <!-- Cover Image -->
+            <div class="h-56 w-full bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=2068&auto=format&fit=crop');">
+                <div class="absolute inset-0 bg-black/10 dark:bg-black/40 transition-colors"></div>
+            </div>
+
+            <div class="max-w-3xl mx-auto px-6 relative pb-20">
+                <!-- Profile Icon -->
+                <div class="absolute -top-16 left-6">
+                    <div class="w-32 h-32 text-6xl flex items-center justify-center bg-white dark:bg-[#2D2D2D] rounded-full shadow-sm border border-gray-200 dark:border-gray-700 select-none">
+                        🧑‍💻
+                    </div>
+                </div>
+
+                <div class="pt-20">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">About Me</h1>
+                    
+                    <!-- Properties/Meta Block -->
+                    <div class="flex flex-wrap gap-y-2 gap-x-6 text-sm text-gray-600 dark:text-gray-400 mb-8 border-b border-gray-200 dark:border-gray-700 pb-6">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            <span>Developer</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="github" class="w-4 h-4"></i>
+                            <a href="https://github.com/Yunimo30" target="_blank" class="hover:text-blue-500 hover:underline transition">github.com/Yunimo30</a>
+                        </div>
+                    </div>
+
+                    <!-- Content Body -->
+                    <article class="prose prose-gray dark:prose-invert max-w-none">
+                        <p class="text-lg leading-relaxed">
+                            Hi! I'm a developer passionate about creating systems that solve real-world problems. My work ranges from environmental monitoring systems to climate risk management tools, and I occasionally dive into game development.
+                        </p>
+                        
+                        <p>
+                            I enjoy working with <strong>Web Technologies</strong> to build accessible dashboards, and I use <strong>Roblox LuaU</strong> to explore 3D interaction design.
+                        </p>
+
+                        <h3 class="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-gray-100">Technical Skills</h3>
+                        <div class="flex flex-wrap gap-2 mb-8">
+                            <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm border border-gray-200 dark:border-gray-700">JavaScript</span>
+                            <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm border border-gray-200 dark:border-gray-700">Leaflet.js</span>
+                            <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm border border-gray-200 dark:border-gray-700">Roblox Studio</span>
+                            <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm border border-gray-200 dark:border-gray-700">Tailwind</span>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button onclick="switchPage('portfolio')" class="mt-10 flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-5 py-3 rounded hover:opacity-90 transition group font-medium">
+                            <span>Browse Projects</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </button>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: PORTFOLIO (Board View) -->
+        <section id="portfolio-page" class="page-section pt-14 hidden h-[calc(100vh-3.5rem)] flex flex-col bg-notion-bg dark:bg-notion-darkBg">
+             <!-- Header -->
+            <div class="px-8 pt-8 pb-4 shrink-0">
+                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+                 <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">A collection of my recent work, organized by category.</p>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="px-8 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="flex items-center gap-2 text-black dark:text-white font-medium border-b-2 border-black dark:border-white px-1 py-1">
+                        <i data-lucide="kanban" class="w-4 h-4"></i>
+                        <span>Board</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanban Board Container -->
+            <div class="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scroll">
+                <div class="flex h-full gap-6 min-w-max pb-4 justify-center mx-auto" id="board-container">
+                    <!-- Columns will be injected here by JS -->
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- PROJECT MODAL -->
+    <div id="project-modal" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/30 dark:bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white dark:bg-[#202020] rounded-lg shadow-2xl h-[85vh] overflow-hidden flex flex-col border border-gray-200 dark:border-gray-700 transition-colors">
+            <!-- Modal Header -->
+            <div class="h-36 bg-gray-100 dark:bg-[#2D2D2D] relative shrink-0 transition-colors" id="modal-cover">
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-2 rounded-full hover:bg-black/20 dark:hover:bg-white/20 transition text-gray-700 dark:text-gray-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="p-8 overflow-y-auto flex-1 custom-scroll">
+                <div class="-mt-14 mb-5 p-4 bg-white dark:bg-[#2D2D2D] rounded-lg w-fit shadow-sm border border-gray-100 dark:border-gray-600">
+                    <!-- Icon container updated for Lucide -->
+                    <i id="modal-icon" class="w-12 h-12 text-gray-800 dark:text-gray-200"></i>
+                </div>
+                
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6" id="modal-title">Project Title</h2>
+                
+                <!-- Disclaimer Container -->
+                <div id="modal-disclaimer"></div>
+
+                <!-- Properties -->
+                <div class="space-y-0 mb-8 border-b border-gray-200 dark:border-gray-700 pb-6">
+                    <!-- Row 1 -->
+                    <div class="grid grid-cols-[120px_1fr] py-2 items-center hover:bg-gray-50 dark:hover:bg-[#2A2A2A] rounded px-2 transition">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4"></i> Type</span>
+                        <span class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-0.5 rounded w-fit border border-gray-200 dark:border-gray-600" id="modal-category">Website</span>
+                    </div>
+                    <!-- Row 2 -->
+                    <div class="grid grid-cols-[120px_1fr] py-2 items-center hover:bg-gray-50 dark:hover:bg-[#2A2A2A] rounded px-2 transition">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2"><i data-lucide="code-2" class="w-4 h-4"></i> Stack</span>
+                        <div class="flex gap-2 flex-wrap" id="modal-stack"></div>
+                    </div>
+                    <!-- Row 3: Links -->
+                    <div class="grid grid-cols-[120px_1fr] py-2 items-center hover:bg-gray-50 dark:hover:bg-[#2A2A2A] rounded px-2 transition">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> Links</span>
+                        <div class="flex gap-3" id="modal-links-container">
+                            <!-- Buttons injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prose prose-gray dark:prose-invert max-w-none text-gray-800 dark:text-gray-300" id="modal-desc">
+                    <!-- Description injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA STORE ---
+        // ICONS: We now use Lucide icon names (waves, activity, terminal, gamepad-2)
+        const projects = [
+            {
+                id: 1,
+                title: "Salinligtas",
+                icon: "waves", 
+                category: "Websites",
+                stack: ["HTML/CSS", "JS (ES6+)", "Leaflet.js", "Chart.js", "Open-Meteo API"],
+                desc: "Campus Flood Monitoring & Response System. This application provides real-time visualization of flood prone areas within the campus to aid in rapid response and student safety.<br><br><strong>Backend:</strong> Python HTTP Server (Local Dev), Geocoding Service.",
+                liveLink: "https://yunimo30.github.io/SalinLigtas",
+                sourceLink: "https://github.com/Yunimo30/SalinLigtas",
+                disclaimer: null
+            },
+            {
+                id: 2,
+                title: "HANDA",
+                icon: "activity",
+                category: "Websites",
+                stack: ["Vanilla JS", "TailwindCSS", "Vite", "Chart.js", "Leaflet.js", "date-fns"],
+                desc: "Health and Climate Risk Management Portal. A dashboard designed to help local government units manage and visualize health risks exacerbated by climate conditions. Features custom state management and local storage service abstraction.",
+                liveLink: "https://yunimo30.github.io/HANDA-Management-Portal",
+                sourceLink: "https://github.com/Yunimo30/HANDA-Management-Portal",
+                disclaimer: "⚠️ <strong>Note:</strong> This project version is currently outdated and may not reflect the latest data or features."
+            },
+            {
+                id: 3,
+                title: "Image Compressor",
+                icon: "terminal",
+                category: "Scripts",
+                stack: ["Python", "Automation"],
+                desc: "CLI tool that watches a folder and compresses new images without losing quality.",
+                liveLink: "#",
+                sourceLink: "#",
+                disclaimer: null
+            },
+            {
+                id: 4,
+                title: "Trekscape",
+                icon: "gamepad-2",
+                category: "Games",
+                stack: ["Roblox LuaU", "Fullstack Dev", "Modeling", "Animation"],
+                desc: "A 3D puzzle-platformer game featuring custom exploration mechanics. Developed entirely by a solo developer, handling script logic, environmental modeling, sound design, and UI animation.",
+                liveLink: "https://www.roblox.com/games/111923386202832/Trekscape-A-Puzzle-Platformer-game",
+                sourceLink: "#",
+                disclaimer: "🚧 <strong>Status:</strong> Work in Progress (MVP). The game is playable but currently in early development stages."
+            },
+            {
+                id: 5,
+                title: "Dungeon Crawler",
+                icon: "sword",
+                category: "Games",
+                stack: ["Unity", "C#"],
+                desc: "A top-down roguelike game developed for a Game Jam. Features procedural generation.",
+                liveLink: "#",
+                sourceLink: "#",
+                disclaimer: null
+            }
+        ];
+
+        const categories = [
+            { name: "Websites" },
+            { name: "Scripts" },
+            { name: "Games" }
+        ];
+
+        // --- 2. APP STATE & DOM ELEMENTS ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const boardContainer = document.getElementById('board-container');
+        const breadcrumb = document.querySelector('.breadcrumb');
+        
+        // --- 3. THEME LOGIC ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('toggle-circle').classList.add('translate-x-6');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('toggle-circle').classList.remove('translate-x-6');
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const circle = document.getElementById('toggle-circle');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                circle.classList.remove('translate-x-6');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                circle.classList.add('translate-x-6');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // --- 4. INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            lucide.createIcons();
+            renderBoard();
+        });
+
+        // --- 5. NAVIGATION ---
+        function toggleSidebar() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                // Open Sidebar
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10); 
+            } else {
+                // Close Sidebar
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300); 
+            }
+        }
+
+        function switchPage(pageId) {
+            // FIX: Only toggle sidebar if it is currently OPEN (visible)
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                toggleSidebar();
+            }
+
+            const aboutPage = document.getElementById('about-page');
+            const portfolioPage = document.getElementById('portfolio-page');
+
+            if (pageId === 'about') {
+                portfolioPage.classList.add('hidden');
+                aboutPage.classList.remove('hidden');
+                breadcrumb.textContent = 'About Me';
+            } else {
+                aboutPage.classList.add('hidden');
+                portfolioPage.classList.remove('hidden');
+                portfolioPage.classList.add('flex');
+                breadcrumb.textContent = 'Project Board';
+                lucide.createIcons();
+            }
+        }
+
+        // --- 6. RENDER BOARD ---
+        function renderBoard() {
+            boardContainer.innerHTML = ''; 
+
+            categories.forEach(cat => {
+                const catProjects = projects.filter(p => p.category === cat.name);
+                
+                const col = document.createElement('div');
+                col.className = "w-72 md:w-80 shrink-0 flex flex-col h-full rounded-lg";
+                
+                col.innerHTML = `
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-sm text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${cat.name}</span>
+                            <span class="text-gray-400 text-xs">${catProjects.length}</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 space-y-3 overflow-y-auto pr-2 custom-scroll pb-20" id="col-${cat.name}">
+                        <!-- Cards go here -->
+                    </div>
+                `;
+
+                const cardContainer = col.querySelector(`#col-${cat.name}`);
+                
+                catProjects.forEach(proj => {
+                    const card = document.createElement('div');
+                    card.className = "bg-notion-card dark:bg-notion-darkCard p-3 rounded-md shadow-sm border border-gray-200 dark:border-[#3F3F3F] hover:bg-notion-hover dark:hover:bg-notion-darkHover transition cursor-pointer group select-none";
+                    card.onclick = () => openModal(proj);
+                    
+                    // Show only first 3 tags
+                    const visibleTags = proj.stack.slice(0, 3);
+                    const remaining = proj.stack.length - 3;
+                    
+                    let stackHtml = visibleTags.map(tech => 
+                        `<span class="text-[10px] bg-orange-50 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 px-1.5 py-0.5 rounded border border-orange-100 dark:border-orange-800/50">${tech}</span>`
+                    ).join('');
+                    
+                    if (remaining > 0) {
+                        stackHtml += `<span class="text-[10px] text-gray-400 px-1.5 py-0.5">+${remaining}</span>`;
+                    }
+
+                    // MODIFIED: Use Lucide <i> tag instead of text span
+                    card.innerHTML = `
+                        <div class="flex items-center gap-2 mb-2">
+                            <i data-lucide="${proj.icon}" class="w-5 h-5 text-gray-700 dark:text-gray-300"></i>
+                            <h4 class="font-medium text-gray-800 dark:text-gray-200 text-sm leading-tight decoration-gray-300 underline-offset-2 group-hover:underline">${proj.title}</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            ${stackHtml}
+                        </div>
+                    `;
+                    cardContainer.appendChild(card);
+                });
+
+                boardContainer.appendChild(col);
+            });
+            
+            lucide.createIcons();
+        }
+
+        // --- 7. MODAL LOGIC ---
+        const modal = document.getElementById('project-modal');
+        
+        function openModal(project) {
+            document.getElementById('modal-title').textContent = project.title;
+            
+            // MODIFIED: Update the Icon attribute
+            const iconEl = document.getElementById('modal-icon');
+            iconEl.setAttribute('data-lucide', project.icon);
+
+            document.getElementById('modal-category').textContent = project.category;
+            document.getElementById('modal-desc').innerHTML = `<p>${project.desc}</p>`;
+            
+            // Handle Disclaimer
+            const disclaimerDiv = document.getElementById('modal-disclaimer');
+            if (project.disclaimer) {
+                disclaimerDiv.innerHTML = `
+                    <div class="mb-6 p-3 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 text-amber-800 dark:text-amber-200 text-sm">
+                        ${project.disclaimer}
+                    </div>
+                `;
+            } else {
+                disclaimerDiv.innerHTML = '';
+            }
+
+            // Inject Stack
+            const stackContainer = document.getElementById('modal-stack');
+            stackContainer.innerHTML = project.stack.map(tech => 
+                `<span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">${tech}</span>`
+            ).join('');
+
+            // Inject Links
+            const linksContainer = document.getElementById('modal-links-container');
+            let linksHtml = '';
+            
+            // Logic for Live Link (Generic or Roblox specific text could go here)
+            if(project.liveLink && project.liveLink !== '#') {
+                const btnText = project.category === 'Games' ? 'Play Game' : 'Live Demo';
+                const iconName = project.category === 'Games' ? 'gamepad-2' : 'external-link';
+                linksHtml += `<a href="${project.liveLink}" target="_blank" class="text-xs flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded hover:underline border border-blue-100 dark:border-blue-800"><i data-lucide="${iconName}" class="w-3 h-3"></i> ${btnText}</a>`;
+            }
+            if(project.sourceLink && project.sourceLink !== '#') {
+                linksHtml += `<a href="${project.sourceLink}" target="_blank" class="text-xs flex items-center gap-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition border border-gray-200 dark:border-gray-600"><i data-lucide="github" class="w-3 h-3"></i> Source Code</a>`;
+            }
+            if(linksHtml === '') linksHtml = '<span class="text-gray-400 text-xs">No links available</span>';
+            
+            linksContainer.innerHTML = linksHtml;
+
+            // Dynamic cover colors
+            const colors = ['bg-pink-100', 'bg-blue-100', 'bg-green-100', 'bg-amber-100'];
+            const cover = document.getElementById('modal-cover');
+            cover.className = "h-36 relative shrink-0 transition-colors";
+            cover.classList.add(colors[project.id % colors.length]);
+            cover.classList.add('dark:bg-[#2D2D2D]'); 
+
+            modal.classList.remove('hidden');
+            lucide.createIcons(); // VITAL: Renders the new icon in the modal
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+    </script>
+</body>
+</html>
